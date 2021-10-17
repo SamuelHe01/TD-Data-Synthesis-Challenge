@@ -41,9 +41,9 @@ def search_lots():
     soup = url_to_soup(link)
     table = soup.find(class_='card-deck')
     rows = table.findAll('a')
-    names = []
+    names = set()
     for p in rows:
-            names.append(p.text)
+            names.add(p.text)
     return (names)
 
 def get_garage_rates():
@@ -70,20 +70,40 @@ def readfromxl():
         if(type(sheet.cell_value(i+2,2)) == float and sheet.cell_value(i+2,2)>0):
             lotnames.append(sheet.cell_value(i+2, 0))
             goodrows.append(i+3)
-    print(lotnames)
-    print(goodrows)
-    print(len(lotnames))
+    return lotnames
 
-    return lotnames, goodrows
-
-def writedata_xl(lotnames, goodrows):
+def writedata_xl(lotnames):
     wb = Workbook()
     sheet1 = wb.add_sheet('Sheet 1')
+    weekday = True
     linecounter = 1
+    hour = 0
+    ticker = 1
+    sheet1.write(0, 0, 'Lot/Garage')
+    sheet1.write(0, 1, 'Day')
+    sheet1.write(0, 2, 'Hour')
     for name in lotnames:
-        for i in range(25):
+        for i in range(96):
             sheet1.write(linecounter, 0, name)
+            if (ticker == 3):
+                sheet1.write(linecounter, 1, 'break')
+            if (ticker == 4):
+                sheet1.write(linecounter, 1, 'summer')
+            if (ticker == 1):
+                sheet1.write(linecounter, 1, 'weekday')
+            if (ticker == 2):
+                sheet1.write(linecounter, 1, 'weekend')
+            if ((i + 1) % 24 == 0):
+                ticker += 1
+                if(ticker == 5):
+                    ticker = 1
+            if(hour == 24):
+                hour = 0
+            sheet1.write(linecounter, 2, hour)
+            hour += 1
+            linecounter += 1
 
+    wb.save('examples.xls')
 
 def get_permits():
     link = 'https://transport.tamu.edu/Parking/faqpermit/info.aspx'
@@ -152,5 +172,10 @@ if __name__ == '__main__':
     #readfromxl()
     #print(get_permits())
     #event_parking_lots()
-    #readfromxl()
-    print(search_lots())
+    #print(len(search_lots()))
+    #event_parking_lots()
+    lots = []
+    f = open(r'C:\Users\ericlee2\Downloads\data.txt', 'r')
+    for line in f:
+        lots.append(line)
+    writedata_xl(lots)
