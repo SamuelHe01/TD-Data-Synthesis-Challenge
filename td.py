@@ -1,3 +1,6 @@
+#This .py had many functions for our various approaches to our project
+#The main purpose of this file was to prepare the base excel sheet that we eventually manually input data into
+
 import requests
 from bs4 import BeautifulSoup
 import xlrd
@@ -197,7 +200,7 @@ if __name__ == '__main__':
     #print(len(search_lots()))
     #event_parking_lots()
     lots = []
-    f = open(r'C:\Users\ericlee2\Downloads\data.txt', 'r')
+    f = open(r'.\data.txt', 'r')
     for line in f:
         lots.append(line)
     writedata_xl(lots)
